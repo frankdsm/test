@@ -2,94 +2,84 @@
  * Created by Stijn on 20/03/2016.
  */
 // grab the pacakges that we need for the user model
-var mongoose = require('mongoose'),
-	Schema = mongoose.Schema,
-	config = require('../config'),
-	bcrypt = require('bcrypt-nodejs');
+var mongoose 	= require('mongoose'),
+	Schema 		= mongoose.Schema,
+	config 		= require('../config'),
+	bcrypt 		= require('bcrypt-nodejs');
 
 // user Schema
 var UserSchema = new Schema({
 	userID: {
-		'type': Number,
-		'index': {
+		type: Number,
+		index: {
 			'unique': true
 		}
 	},
 	username: {
-		'type': String,
-		'required': true,
-		'index': {
+		type: String,
+		required: true,
+		index: {
 			'unique': true
 		}
 	},
 	usertype: {
-		'type': String,
-		'enum': [
+		type: String,
+		enum: [
 			'user', 'admin'
 		]
 	},
 	password: {
-		'type': String,
-		'required': true,
-		'select': false
+		type: String,
+		required: true,
+		select: false
 	},
 	firstname: {
-		'type': String
+		type: String
 	},
 	lastname: {
-		'type': String
+		type: String
 	},
 	email: {
-		'type': String
+		type: String
 	},
 	gender: {
-		'type': String,
-		'enum': [
+		type: String,
+		enum: [
 			'male', 'female', 'undefined'
 		]
 	},
 	bio: {
-		'type': String
+		type: String
 	},
 	avatar: {
-        'type': String
-    },
+		type: String
+	},
 	library: {
-		platforms: {
-			'items': {
-				'id': {
-					'type': Number
-				}
+		platforms: [{
+			id: {
+				type: Number
 			}
-		},
-		games: {
-			'items': {
-				id: {
-					'type': Number
-				},
-				name: {
-					'type': String
-				},
-				platforms: {
-					'items': {
-						'id': {
-							'type': Number
-						}
+		}],
+		games: [{
+			id: {
+				type: Number
+			},
+			name: {
+				type: String
+			},
+			platforms: {
+				items: {
+					id: {
+						type: Number
 					}
 				}
 			}
-		}
+		}]
 	},
-	friends: {
-		'items': {
-			'id': {
-				'type': Number
-			},
-            'name': {
-                'type': String
-            }
-		}
-	},
+	friends: [{
+		id: Number,
+		name: String
+	}],
 	userData: {
 		registerDate: Date,
 		lastLogon: Date,
@@ -99,7 +89,7 @@ var UserSchema = new Schema({
 });
 
 // hash the password and userID before the user is saved
-UserSchema.pre('save', function(next){
+UserSchema.pre('save', function (next) {
 	var user = this;
 
 	// set userID, registration date, usertype and active when new user
@@ -111,16 +101,16 @@ UserSchema.pre('save', function(next){
 			hash = ((hash << 5) - hash) + char;
 			hash |= 0; // Convert to 32bit integer
 		}
-		user.userID = Math.abs(hash).toString().substring(0,7);
-		user.userData.registerDate = new Date();
-		user.userData.active = true;
-		user.usertype = 'user';
-		user.gender =  'undefined';
-        user.bio = '';
-        user.library = {};
-        user.library.platforms = [];
-        user.library.games = [];
-        user.friends = [];
+		user.userID 				= Math.abs(hash).toString().substring(0, 7);
+		user.userData.registerDate 	= new Date();
+		user.userData.active 		= true;
+		user.usertype	 			= 'user';
+		user.gender 				= 'undefined';
+		user.bio 					= '';
+		user.library 				= {};
+		user.library.platforms 		= [];
+		user.library.games 			= [];
+		user.friends 				= [];
 
 	}
 
